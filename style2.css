@@ -22,5 +22,20 @@ main {
 }
 
 .grid-item2 {
+    grid-column: span 2;
     text-align: left;
+}
+
+#logTable td {
+    word-break: break-word; /* Lange woorden/URLs breken */
+    white-space: normal;    /* Zorg dat de tekst op meerdere regels kan */
+    vertical-align: top;    /* Optioneel: bovenaan uitlijnen */
+}
+
+.fieldset {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 }

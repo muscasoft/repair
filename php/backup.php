@@ -103,10 +103,16 @@ function makeBackupDatabase(): string
     return true;
 }
 
-function deleteBackupFiles($filenamesWithHashes): string
+function deleteBackupFiles(): string
 {
     global $backupFolder;
     try {
+        if (!isset($_POST['FilenamesWithHashes'])) {
+            throw new Exception('No FilenamesWithHashes parameter gevonden');
+        }
+
+        $filenamesWithHashes = json_decode($_POST['FilenamesWithHashes'], true);
+
         if (!is_dir($backupFolder)) {
             throw new Exception('Back-up folder not found');
         }

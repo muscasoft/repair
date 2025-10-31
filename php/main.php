@@ -8,6 +8,7 @@ include __DIR__ . '/backup.php';
 include __DIR__ . '/disk.php';
 include __DIR__ . '/files.php';
 include __DIR__ . '/general.php';
+include __DIR__ . '/logs.php';
 include __DIR__ . '/setupchecks.php';
 
 $action = $_POST['action'];
@@ -34,16 +35,13 @@ switch ($action) {
         echo listBackupFiles();
         break;
     case 'DeleteBackupFiles':
-        if (!isset($_POST['FilenamesWithHashes'])) {
-            http_response_code(404);
-            echo json_encode('No FilenamesWithHashes parameter gevonden');
-            exit;
-        }
-        $filenamesWithHashes = json_decode($_POST['FilenamesWithHashes'], true);
-        echo deleteBackupFiles($filenamesWithHashes);
+        echo deleteBackupFiles();
         break;
+    case 'GetLogData':
+        echo getLogData();
+        break;        
     case 'GetSetupChecks':
-        echo json_encode(getSetupChecks());
+        echo getSetupChecks();
         break;
     case 'SkipRepairSetupChecks':
         echo json_encode($skipRepairSetupChecks);

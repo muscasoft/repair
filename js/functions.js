@@ -5,11 +5,13 @@ const diskStatistics = document.getElementById('diskStatistics');
 const backups  = document.getElementById('backups');
 const setupChecks = document.getElementById('setupChecks');
 const logData = document.getElementById('logData');
+const logNC = document.getElementById('logNC');
 updateNCVersion();
 updateUpdateRunning();
 updateDiskStatistics();
 updateBackups();
 updateSetupChecksStart();
+updateLogNC();
 
 async function updateNCVersion() {
   $.ajax({
@@ -444,4 +446,162 @@ async function startPhpFunction(id) {
 function addToLogData(logText) {
   logData.innerText = logData.innerText == '-' ?  '' : '-----------\n' + logData.innerText;
   logData.innerText = JSON.stringify(logText, '##', 2) + logData.innerText;
+}
+
+function updateLogNC() {
+  // Event listeners
+
+  buildLogNCTable();
+  loadNCLogs();
+}
+
+function buildLogNCTable() {
+  const daysLabel = document.createElement('label');
+  daysLabel.setAttribute('for','daysSelect');
+  daysLabel.textContent = 'Number of days to select:';
+  logNC.appendChild(daysLabel);
+
+  const daysSelect = document.createElement('select');
+  daysSelect.id = 'daysSelect';
+  logNC.appendChild(daysSelect);
+
+  for(let i=1; i<=30; i++){
+    const day = document.createElement('option');
+    day.value = i;
+    day.textContent = i;
+    daysSelect.appendChild(day);
+  }
+
+  daysSelect.addEventListener('change', renderNCLogs);
+  daysSelect.value = 10; // start value 10 days
+
+  const fieldset = document.createElement('fieldset');
+  fieldset.style.marginTop = '10px';
+  fieldset.style.marginBottom = '10px';
+  fieldset.style.display = 'flex';
+  fieldset.style.alignItems = 'center';
+  fieldset.style.flexWrap = 'wrap';
+
+  const legend = document.createElement('legend');
+  legend.textContent = 'Filter on level:';
+  fieldset.appendChild(legend);
+
+  const levels = [
+    {val:1, text:'Info'},
+    {val:2, text:'Warning'},
+    {val:3, text:'Error'},
+    {val:4, text:'Fataal'}
+  ];
+
+  levels.forEach(level=>{
+    const label = document.createElement('label');
+    label.style.marginRight = '10px';
+    label.style.display = 'flex';
+    label.style.alignItems = 'center';
+    label.style.lineHeight = '1.2'
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'levelCheckbox';
+    checkbox.value = level.val;
+    checkbox.checked = level.val>2;
+    
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(' ' + level.text));
+    
+    fieldset.appendChild(label);
+  });
+
+  const levelCheckboxes = fieldset.querySelectorAll('.levelCheckbox');
+  levelCheckboxes.forEach(checkbox => checkbox.addEventListener('change', renderNCLogs));
+
+  logCounter = document.createElement('p');
+  logCounter.id = 'logCounter';
+  logCounter.style.marginLeft = '40px';
+  logCounter.style.lineHeight = '1.2';
+  logCounter.style.alignSelf = 'flex-start';
+
+  fieldset.appendChild(logCounter);
+
+  logNC.appendChild(fieldset);
+
+  const logTable = document.createElement('table');
+  logTable.id = 'logTable';
+
+  const thead = document.createElement('thead');
+  const trHead = document.createElement('tr');
+  ['Tijd','Level','App','User','Message'].forEach(columnTitle=>{
+      const th = document.createElement('th');
+      th.textContent = columnTitle;
+      trHead.appendChild(th);
+  });
+  thead.appendChild(trHead);
+  logTable.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  logTable.appendChild(tbody);
+
+  logNC.appendChild(logTable);  
+}
+
+async function loadNCLogs() {
+  $.ajax({
+    type: 'POST',
+    url: 'php/main.php',
+    data: { action: 'GetLogData'},
+    success: function(returnValue) {
+        // Log level must be saved as an integer
+        logs = JSON.parse(returnValue).map(log => ({ ...log, level: parseInt(log.level) }));
+        renderNCLogs();
+    },
+    error: function(returnValue, status, error) {
+        console.error('Error retrieving the logs:', status, error);
+    }
+  })
+}
+
+function renderNCLogs() {
+  const daysSelect = document.getElementById('daysSelect');
+  const days = parseInt(daysSelect.value);
+
+  const levelCheckboxes = document.querySelectorAll('.levelCheckbox');
+  const selectedLevels = Array.from(levelCheckboxes)
+      .filter(checkbox => checkbox.checked)
+      .map(checkbox => parseInt(checkbox.value));
+
+  const now = new Date();
+  const cutoff = new Date(now.getTime() - days*24*60*60*1000);
+
+  const tbody = document.querySelector('#logTable tbody');
+  tbody.innerHTML = '';
+
+  const filtered = logs
+      .filter(log => new Date(log.time) >= cutoff && selectedLevels.includes(log.level))
+      .sort((Date1,Date2) => new Date(Date2.time) - new Date(Date1.time));
+
+  let logCounter = document.getElementById('logCounter');
+  logCounter.textContent = `Total filtered logs: ${filtered.length}`;
+
+  filtered.forEach(log => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+          <td>${formatDate(log.time)}</td>
+          <td class="level-${log.level}">${log.level}</td>
+          <td>${log.app}</td>
+          <td>${log.user}</td>
+          <td>${log.message}</td>
+      `;
+      tbody.appendChild(tr);
+  });
+}
+
+function formatDate(isoString) {
+    const date = new Date(isoString);
+    const yyyy = date.getFullYear();
+    const dd = String(date.getDate()).padStart(2,'0');
+    const mm = String(date.getMonth()+1).padStart(2,'0');
+    const hh = String(date.getHours()).padStart(2,'0');
+    const min = String(date.getMinutes()).padStart(2,'0');
+    const ss = String(date.getSeconds()).padStart(2,'0');
+    return `${yyyy}-${dd}-${mm} ${hh}:${min}:${ss}`;
 }
