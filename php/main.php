@@ -35,7 +35,7 @@ switch ($action) {
         break;
     case 'DeleteBackupFiles':
         if (!isset($_POST['FilenamesWithHashes'])) {
-            http_response_code(403);
+            http_response_code(404);
             echo json_encode('No FilenamesWithHashes parameter gevonden');
             exit;
         }

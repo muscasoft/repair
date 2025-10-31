@@ -33,6 +33,7 @@ function getDiskStatistics($path = '/', $precision = 2, $unit = 'auto'): string
         $parts = preg_split('/\s+/', trim($output[0]));
         $usedBytes = isset($parts[0]) ? (int)$parts[0] : 0;
     } catch (Exception $e) {
+        http_response_code(404);
         return $e->getMessage();
     }
     

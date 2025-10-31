@@ -349,46 +349,31 @@ async function resetRunningUpdate(id) {
   })
 }
 
+
+function ajaxPost(action) {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      type: 'POST',
+      url: 'php/main.php',
+      data: { action },
+      success: data => resolve(JSON.parse(data)),
+      error: err => reject(err)
+    });
+  });
+}
+
 async function updateSetupChecksStart() {
-  $.ajax({
-    type: 'POST',
-    url: 'php/main.php',
-    data: { action: 'DefinedActions'},
-    success: function(returnValue) {
-      updateSetupChecksStartIncludeSkips(JSON.parse(returnValue));
-    },
-    error: function(returnValue) {
-      alert('Repair not successfull.\n' + returnValue);
-    }
-  })
-}
+  try {
+    const [knownSetupChecks, skipRepairSetupChecks, setupChecks] = await Promise.all([
+      ajaxPost('DefinedActions'),
+      ajaxPost('SkipRepairSetupChecks'),
+      ajaxPost('GetSetupChecks')
+    ]);
 
-async function updateSetupChecksStartIncludeSkips(knownSetupChecks) {
-  $.ajax({
-    type: 'POST',
-    url: 'php/main.php',
-    data: { action: 'SkipRepairSetupChecks'},
-    success: function(returnValue) {
-      updateSetupChecks(knownSetupChecks, JSON.parse(returnValue));
-    },
-    error: function(returnValue) {
-      alert('Repair not successfull.\n' + returnValue);
-    }
-  })
-}
-
-async function updateSetupChecks(knownSetupChecks, skipRepairSetupChecks) {
-  $.ajax({
-    type: 'POST',
-    url: 'php/main.php',
-    data: { action: 'GetSetupChecks'},
-    success: function(returnValue) {
-      processSetupChecks(JSON.parse(returnValue), knownSetupChecks, skipRepairSetupChecks);
-    },
-    error: function(returnValue) {
-      alert('Geen OCC test kunnen uitvoeren' + returnValue);
-    }
-  })
+    processSetupChecks(setupChecks, knownSetupChecks, skipRepairSetupChecks);
+  } catch (err) {
+    alert('Repair not successful.\n' + err.responseText);
+  }
 }
 
 function processSetupChecks(mySetupChecks, knownSetupChecks, skipRepairSetupChecks) { 
@@ -458,49 +443,5 @@ async function startPhpFunction(id) {
 
 function addToLogData(logText) {
   logData.innerText = logData.innerText == '-' ?  '' : '-----------\n' + logData.innerText;
-//  logData.innerText = print_r(logText) + logData.innerText;
   logData.innerText = JSON.stringify(logText, '##', 2) + logData.innerText;
-}
-
-function print_r(myVar, maxDepth, seperator, depth) {
-  depth = depth || 0;
-  maxDepth = maxDepth || 10;
-  seperator = seperator || '.';
-  
-  if (depth > maxDepth) return "[WARNING: Too much recursion]\n";
-  
-  var count, result = '', indentation = '', objectType2 = typeof myVar;
-  
-  if (myVar === null) {
-    result += "(null)\n";
-  } else if (objectType2 == 'object') {
-  // object
-    depth++;
-    
-    for (count = 0; count < depth; count++) { 
-      indentation += seperator;
-    }
-    if (myVar && myVar.length) {
-      objectType2 = 'array';
-    }
-    
-    result += '(' + objectType2 + ") :\n";
-    
-    for (i in myVar) {
-      try {
-        result += indentation + '[' + i + '] => ' + print_r (myVar[i], maxDepth, seperator, (depth + 1));
-      }
-      catch (error) {
-        return "[ERROR: " + error + "]\n";
-      }
-    }
-  } else {
-  //string
-    if (objectType2 == 'string' ) {
-      if (myVar == '' )        myVar = '(empty)';
-    }
-//    result += '(' + t + ') ' + obj + "\n";
-    result += myVar + "\n";
-  }
-  return result;
 }

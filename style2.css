@@ -1,0 +1,26 @@
+main {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+}
+
+.logData {
+    min-height: 3lh;
+    max-height: 10lh;
+    max-width:100;
+    border: 1px solid black;
+    overflow-y: scroll;
+    text-align: left;
+}
+
+.grid-item, .grid-item2 {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border: 1px solid #ccc;
+    overflow: hidden;
+    text-align: center;
+}
+
+.grid-item2 {
+    text-align: left;
+}
