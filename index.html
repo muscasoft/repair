@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Repair error messages in Nextcloud's admin page</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="img/favicon.png">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script type="text/javascript" src="js/functions.js" defer></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        main {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 10px;
+        }
+        .logData {
+            min-height: 3lh;
+            max-height: 10lh;
+            max-width:100;
+            border: 1px solid black;
+            overflow-y: scroll;
+            text-align: left;
+        }
+        .grid-item, .grid-item2 {
+          background-color: #f0f0f0;
+          padding: 20px;
+          border: 1px solid #ccc;
+          overflow: hidden;
+          text-align: center;
+        }
+        .grid-item2 {
+          text-align: left;
+        }
+      </style>
+</head>
+<header>
+  <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 142 71" width="62" height="50">
+    <use href="img/nextcloud-logo.svg"></use>
+  </svg>
+</header>
+<body>
+  <div class="wrapper">
+    <div class="container">
+      <main>
+        <div class="grid-item">
+          <h1>Versie</h1>
+          <div class="ncVersion" name="ncVersion" id="ncVersion">
+            <p>Please wait...</p>
+          </div>
+        </div>
+        <div class="grid-item">
+          <h1>Update running</h1>
+          <div class="updateRunning" name="updateRunning" id="updateRunning">
+            <p>Please wait...</p>
+          </div>
+        </div>
+        <div class="grid-item">
+          <h1>Disk statistics</h1>
+          <div class="diskStatistics" name="diskStatistics" id="diskStatistics">
+            <p>Please wait...</p>
+          </div>
+        </div>
+        <div class="grid-item">
+          <h1>Backups</h1>
+          <div class="backups" name="backups" id="backups">
+            <p>Please wait...</p>
+          </div>       
+        </div>
+        <div class="grid-item">
+          <h1>Beveiligings- en instellingswaarschuwingen</h1>
+          <div class="setupChecks" name="setupChecks" id="setupChecks">
+            <p>Please wait...</p>
+          </div>
+        </div>
+        <div class="grid-item2">
+          <h1>Logging</h1>
+          <pre class="logData" name="logData" id="logData">
+            <p>-</p>
+          </pre>
+        </div>
+      </main>
+    </div>  
+  </div>
+</body>
+</html>
