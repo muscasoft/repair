@@ -1,4 +1,7 @@
 // v2 version check included
+// 06/11/2025 : Content Type in header set to 'application/json', so json.encode should not be called anymore
+
+
 const ncVersion = document.getElementById('ncVersion');
 const updateRunning = document.getElementById('updateRunning');
 const diskStatistics = document.getElementById('diskStatistics');

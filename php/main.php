@@ -3,13 +3,15 @@
 // mogelijk nog vervangen ' en .  door formatted string en ""
 // mogelijk nog vervangen shell_exec door exec
 // get fileLocations: $occCommand, $versionFileName, $configFileName and $stepPattern;
-include __DIR__ . '/config.php';
-include __DIR__ . '/backup.php';
-include __DIR__ . '/disk.php';
-include __DIR__ . '/files.php';
-include __DIR__ . '/general.php';
-include __DIR__ . '/logs.php';
-include __DIR__ . '/setupchecks.php';
+// 06/11/2025 : Content Type in header set to 'application/json' so all functions should return string or array, no JSON
+
+require_once __DIR__ . '/config.php';
+require_once  __DIR__ . '/backup.php';
+require_once  __DIR__ . '/disk.php';
+require_once  __DIR__ . '/files.php';
+require_once  __DIR__ . '/general.php';
+require_once  __DIR__ . '/logs.php';
+require_once  __DIR__ . '/setupchecks.php';
 
 $action = $_POST['action'];
 switch ($action) {
