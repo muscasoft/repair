@@ -20,7 +20,7 @@ function removeFile($filename): string {
     }
 }
 
-function listFiles($folder): string
+function listFiles($folder): array | string
 {
     try {
         if (!is_dir($folder)) {
@@ -34,7 +34,7 @@ function listFiles($folder): string
             'hash' => getHash($filename),
         ], $filenames);
 
-        return json_encode($result);
+        return $result;
     } catch (Exception $e) {
         http_response_code(404);
         return $e->getMessage();

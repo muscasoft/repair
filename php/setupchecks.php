@@ -13,7 +13,7 @@ $definedActions = [
     'SecurityHeaders' => true,
 ];
 
-function getSetupChecks(): string {
+function getSetupChecks(): array | string {
     global $occCommand;
     $output = shell_exec("php --define apc.enable_cli=1 $occCommand setupchecks --output=json_pretty");
     $obj = json_decode($output);
@@ -38,7 +38,7 @@ function getSetupChecks(): string {
     array_push($result, (object)[
         'logdata' => $obj,
     ]);
-    return json_encode($result);
+    return $result;
 }
 
 function repairSecurityHeaders(): string {

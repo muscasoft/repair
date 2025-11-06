@@ -45,7 +45,7 @@ async function updateUpdateRunning() {
       }
     },
     error: function(returnValue) {
-      alert('Update information not available.\n' + returnValue);
+      alert('Update information not available.\n' +returnValue);
     }
   })
 }
@@ -108,7 +108,7 @@ async function updateLastBackupTime() {
     data: { action: 'GetLatestBackupFile'},
     success: function(returnValue) {
       const latestBackup = document.getElementById('latestBackup');
-      latestBackup.innerText = 'Last back-up date is ' + JSON.parse(returnValue).last_modified;
+      latestBackup.innerText = 'Last back-up date is ' + returnValue.last_modified;
     },
     error: function(returnValue) {
       latestBackup.innerText = 'No last back-up date known.';
@@ -137,7 +137,7 @@ async function listBackups() {
     url: 'php/main.php',
     data: { action: 'ListBackupFiles'},
     success: function(returnValue) {
-      listBackupFilesInPopupWindows(JSON.parse(returnValue));
+      listBackupFilesInPopupWindows(returnValue);
     },
     error: function(returnValue) {
       alert('No back-up files found.\n');
@@ -222,7 +222,7 @@ async function selectBackups() {
     url: 'php/main.php',
     data: { action: 'ListBackupFiles'},
     success: function(returnValue) {
-      filenamesWithHashes = JSON.parse(returnValue);
+      filenamesWithHashes = returnValue;
       selectBackupFilesInPopupWindows(filenamesWithHashes)
         .then((selectedNames) => {
           const filteredFilenamesWithHashes = filenamesWithHashes.filter(file => selectedNames.includes(file.name));
@@ -342,8 +342,8 @@ async function resetRunningUpdate(id) {
     url: 'php/main.php',
     data: { action: 'ResetUpdateRunning'},
     success: function(returnValue) {
-      alert ('Reset successfull\n')
-        updateRunning.innerText = 'No update running';     
+      alert ('Reset successfull\n');
+      updateRunning.innerText = 'No update running';     
     },
     error: function(returnValue) {
       alert('Repair not successfull.\n' + returnValue);
@@ -358,7 +358,7 @@ function ajaxPost(action) {
       type: 'POST',
       url: 'php/main.php',
       data: { action },
-      success: data => resolve(JSON.parse(data)),
+      success: data => resolve(data),
       error: err => reject(err)
     });
   });
@@ -551,7 +551,7 @@ async function loadNCLogs() {
     data: { action: 'GetLogData'},
     success: function(returnValue) {
         // Log level must be saved as an integer
-        logs = JSON.parse(returnValue).map(log => ({ ...log, level: parseInt(log.level) }));
+        logs = returnValue.map(log => ({ ...log, level: parseInt(log.level) }));
         renderNCLogs();
     },
     error: function(returnValue, status, error) {

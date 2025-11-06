@@ -14,55 +14,55 @@ include __DIR__ . '/setupchecks.php';
 $action = $_POST['action'];
 switch ($action) {
     case 'GetNCVersion':
-        echo getNCVersion();
+        returnAsJson(getNCVersion());
         break;
     case 'IsUpdateRunning':
-        echo !empty(glob(getStepPattern()));
+        returnAsJson(!empty(glob(getStepPattern())));
         break;
     case 'ResetUpdateRunning':
-        echo removeFile(glob(getStepPattern())[0]);
+        returnAsJson(removeFile(glob(getStepPattern())[0]));
         break;
     case 'GetDiskStatistics':
-        echo getDiskStatisticsForHomeDir();
+        returnAsJson(getDiskStatisticsForHomeDir());
         break;
     case 'GetLatestBackupFile':
-        echo getLatestBackupFile();
+        returnAsJson(getLatestBackupFile());
         break;
     case 'MakeBackupDatabase':
-        echo makeBackupDatabase();
+        returnAsJson(makeBackupDatabase());
         break;
     case 'ListBackupFiles':
-        echo listBackupFiles();
+        returnAsJson(listBackupFiles());
         break;
     case 'DeleteBackupFiles':
-        echo deleteBackupFiles();
+        returnAsJson(deleteBackupFiles());
         break;
     case 'GetLogData':
-        echo getLogData();
+        returnAsJson(getLogData());
         break;        
     case 'GetSetupChecks':
-        echo getSetupChecks();
+        returnAsJson(getSetupChecks());
         break;
     case 'SkipRepairSetupChecks':
-        echo json_encode($skipRepairSetupChecks);
+        returnAsJson($skipRepairSetupChecks);
         break;
     case 'DefinedActions':
-        echo json_encode($definedActions);
+        returnAsJson($definedActions);
         break;
     case 'MimeTypeMigrationAvailable':
         $result = shell_exec("php --define apc.enable_cli=1 $occCommand maintenance:repair --include-expensive");
-        echo $result;
+        returnAsJson($result);
         break;
     case 'DatabaseHasMissingIndices':
         $result = shell_exec("php --define apc.enable_cli=1 $occCommand db:add-missing-indices");
-        echo $result;
+        returnAsJson($result);
         break;
     case 'SecurityHeaders':
-        echo repairSecurityHeaders();
+        returnAsJson(repairSecurityHeaders());
         break;
     default:
         http_response_code(404);
-        echo 'error: action not defined';
+        returnAsJson('error: action not defined');
         break;
 }    
 
@@ -114,4 +114,10 @@ function getNCVersion(): string {
     } catch (Exception $e) {
         return $e->getMessage();
     }
+}
+
+function returnAsJson($result)
+{
+    header("Content-Type: application/json; charset=utf-8");
+    echo json_encode($result);
 }

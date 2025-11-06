@@ -1,5 +1,5 @@
 <?php
-function getLatestBackupFile(): string
+function getLatestBackupFile(): array | string
 {
     global $backupFolder;
 
@@ -25,18 +25,18 @@ function getLatestBackupFile(): string
 
         $mtime = filemtime($latestFile);
 
-        return json_encode([
+        return [
             "latest_file"   => basename($latestFile),
             "last_modified" => date("Y-m-d H:i:s", $mtime),
             "timestamp"     => $mtime
-        ]);        
+        ];        
     } catch (Exception $e) {
         http_response_code(404);
         return $e->getMessage();
     }
 }
 
-function listBackupFiles(): string
+function listBackupFiles(): array | string
 {
     global $backupFolder;
     return listFiles($backupFolder);

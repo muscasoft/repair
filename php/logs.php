@@ -1,5 +1,5 @@
 <?php
-function getLogData(): string
+function getLogData(): array | string
 {
     global $configFileName;
     try {
@@ -42,7 +42,7 @@ function getLogData(): string
         }
 
         fclose($handle);
-        echo json_encode($logs);
+        return $logs;
     } catch (Exception $e) {
         http_response_code(404);
         return $e->getMessage();
