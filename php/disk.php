@@ -1,4 +1,6 @@
 <?php
+// 06/11/2025 : Response code changed from 404 to 500
+
 function getDiskStatisticsForHomeDir(): string {
     $homeDir = getHomeDir();
     return getDiskStatistics($homeDir, 2, 'B');
@@ -33,7 +35,7 @@ function getDiskStatistics($path = '/', $precision = 2, $unit = 'auto'): string
         $parts = preg_split('/\s+/', trim($output[0]));
         $usedBytes = isset($parts[0]) ? (int)$parts[0] : 0;
     } catch (Exception $e) {
-        http_response_code(404);
+        http_response_code(500);
         return $e->getMessage();
     }
     

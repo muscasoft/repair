@@ -4,6 +4,7 @@
 // mogelijk nog vervangen shell_exec door exec
 // get fileLocations: $occCommand, $versionFileName, $configFileName and $stepPattern;
 // 06/11/2025 : Content Type in header set to 'application/json' so all functions should return string or array, no JSON
+// 06/11/2025 : Response code changed from 404 to 400
 
 require_once __DIR__ . '/config.php';
 require_once  __DIR__ . '/backup.php';
@@ -63,7 +64,7 @@ switch ($action) {
         returnAsJson(repairSecurityHeaders());
         break;
     default:
-        http_response_code(404);
+        http_response_code(400);
         returnAsJson('error: action not defined');
         break;
 }    

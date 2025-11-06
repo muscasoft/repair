@@ -1,6 +1,7 @@
 <?php
 // 06/11/2025 : Content Type in header set to 'application/json' so all functions should return string or array, no JSON
 // 06/11/2025 : Require_once added
+// 06/11/2025 : Response code changed from 404 to 500
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/general.php';
@@ -37,7 +38,7 @@ function getLatestBackupFile(): array | string
             "timestamp"     => $mtime
         ];        
     } catch (Exception $e) {
-        http_response_code(404);
+        http_response_code(500);
         return $e->getMessage();
     }
 }
@@ -96,7 +97,7 @@ function makeBackupDatabase(): string
             throw new Exception('Compression failed\nOutput:\n' . implode('\n', $tarOutput));
         }
     } catch (Exception $e) {
-        http_response_code(404);
+        http_response_code(500);
         return $e->getMessage();
     }
     // --- Remove the original .sql dump ---
@@ -155,7 +156,7 @@ function deleteBackupFiles(): string
         
         return 'Deletion OK';
     } catch (Exception $e) {
-        http_response_code(404);
+        http_response_code(500);
         return $e->getMessage();
     }
 }
